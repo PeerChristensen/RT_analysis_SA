@@ -127,7 +127,7 @@ params %>%
   scale_fill_viridis_d(option="A",alpha=.7) +
   facet_wrap(~sound)
 
-param=params[params$parameter=="tau",]
+param=params[params$parameter=="mu",]
 m=lmer(value~sound+condition+congruent+(1|participant),data=param)
 summary(m)
 plot_model(m, type="diag")
