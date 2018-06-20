@@ -24,8 +24,8 @@ limits = df %>%
 new = df %>% 
   filter(accuracy == "1") %>%
   group_by(participant) %>%
-  inner_join(limits, by = "participant") %>%
-  select(-gender , -RTinv, - age, -RTlag, -logRT, -trialCount)
+  inner_join(limits, by = "participant") #%>%
+  #select(-Gender , -RTinv, - age, -RTlag, -logRT, -trialCount)
 
 nrow(df)
 nrow(new)

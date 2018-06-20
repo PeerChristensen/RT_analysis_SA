@@ -1,4 +1,4 @@
-# ANALYSIS OF IMPLICIT ASSOCIATIONS RT TASK
+# IMPLICIT ASSOCIATIONS RT TASK: SCRIPT FOR DATA CLEANING
 # PEER CHRISTENSEN
 # DATA FROM STELLENBOSCH, MAY 2018
 
@@ -61,19 +61,19 @@ distBox = ggplot(df,aes(x = condition, y=RT)) +
 
 grid.arrange(distDens,distBox,ncol=2)
 # given the task, some RT values are unlikely.
-# zooming in between 0-4000 msec
-# It seems reasonable to set an upper RT limit at 1800 msec, lower at 200 msec
+# zooming in between 0-5000 msec
+# It seems reasonable to set an absolute upper RT cut-off at 5000 msec, lower at 200 msec
 
 distDensZoom = ggplot(df,aes(RT)) + 
   geom_density() +
-  geom_vline(xintercept = 1800, colour = "blue", linetype = "dashed", size=1) +
+  geom_vline(xintercept = 3000, colour = "blue", linetype = "dashed", size=1) +
   facet_wrap(~condition) +
-  coord_cartesian(xlim = c(0,4000))
+  coord_cartesian(xlim = c(0,5000))
 
 distBoxZoom = ggplot(df,aes(x=condition,y=RT)) + 
   geom_jitter(alpha=.3) + geom_boxplot(alpha =.5) + 
-  geom_hline(yintercept = 1800, colour = "blue", linetype = "dashed", size = 1) +
-  coord_cartesian(ylim = c(0,4000)) 
+  geom_hline(yintercept = 3000, colour = "blue", linetype = "dashed", size = 1) +
+  coord_cartesian(ylim = c(0,5000)) 
 
 grid.arrange(distDensZoom,distBoxZoom,ncol=2)
 
@@ -81,9 +81,17 @@ grid.arrange(distDensZoom,distBoxZoom,ncol=2)
 before = nrow(df) 
 before
 
+limits = df %>%
+  filter(accuracy == "1") %>%
+  ddply(.(participant), summarise, m = mean(RT), limit = mean(RT) + (2.5*sd(RT)))
+limits
+
 df = df %>% 
-  filter(RT>200, RT<2000)
-  # OR using mean and sd: filter(RT > .2, RT < (mean(df$RT) + 2*sd(df$RT))) %>%
+  filter(RT>200, RT<5000) %>%
+  group_by(participant) %>%
+  inner_join(limits, by = "participant") %>%
+  filter(RT <= limit)
+
 
 after = nrow(df)
 after
@@ -91,7 +99,7 @@ n_removed = before-after
 n_removed 
 pct_removed = 100-(after/before *100)
 pct_removed
-# 3% exclusion seems fairly low
+# 3.4% exclusion
 
 ####### INSPECT DISTRIBUTIONS / REMOVE OUTLIERs : ACCURACY ###############################
 
@@ -117,7 +125,7 @@ n_removed = before - after2
 n_removed
 total_pct_removed = 100-(after2/before* 100)
 total_pct_removed 
-# 6.3 percent of data removed seems ok
+# 6.63 percent of data removed
 
 ##### WRITE NEW DATA FILE ###############################################
 write_csv(df, "RT_task2_CLEAN")
