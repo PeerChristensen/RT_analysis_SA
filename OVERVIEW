@@ -1,0 +1,34 @@
+
+
+Scripts:
+
+1 - Clean and add variables
+  - filter (accuracy, bad participants)
+  - Inspect overall RT
+  - set absolute thresholds
+  - write CSV (robust)
+  - set individual thresholds
+  - write CSVs
+  
+2 - explore/visualise
+    - visualise conflict effect (incongr RT - congruent RT)
+    - visualise coefficient of variability
+
+3 - ex-gaussian analysis
+    - visualise parameters
+    - test goodness of fit
+    - interactions measure in mu / tau
+    - model parameters
+    - model conflict effect
+    - model coefficient of variability
+
+4 - central tendency analysis:
+    - test transformations (see Baayen)
+    - model
+
+    
+5 - robust analysis
+
+6 - extra
+    - correlation plots
+

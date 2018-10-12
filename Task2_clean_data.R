@@ -24,7 +24,10 @@ df = files %>%
   map(read_csv2) %>%
   reduce(rbind)
 
+df 
+
 ####### ADD / CHANGE VARIABLES ##################################################
+df$language[df$language == "Afrikaans" | df$language == "Afrkaans"] = "Af"
 df$RT = as.numeric(df$RT) * 1000
 df$participant = factor(df$participant)
 df$condition = factor(df$condition)
@@ -49,6 +52,10 @@ prop.table(table(df$accuracy,df$participant),2)
 reversed = c("F24","F31","F34","F35","F39","F43","M31","M36","M42","M44")
 df$accuracy[df$participant %in% reversed] = recode(df$accuracy[df$participant %in% reversed],"0"="1","1"="0") %>%
   as.numeric()
+
+
+##### WRITE NEW DATA FILE ###############################################
+write_csv(df, "RT_task2_CLEAN")
 
 ####### INSPECT DISTRIBUTIONS / REMOVE OUTLIERs : RT ###############################
 distDens = ggplot(df,aes(RT)) + 
@@ -86,8 +93,10 @@ limits = df %>%
   ddply(.(participant), summarise, m = mean(RT), limit = mean(RT) + (2.5*sd(RT)))
 limits
 
+ggplot(limits,(aes(x=limit))) + geom_density()
+
 df = df %>% 
-  filter(RT>200, RT<5000) %>%
+  filter(RT>200, RT<2000) %>%
   group_by(participant) %>%
   inner_join(limits, by = "participant") %>%
   filter(RT <= limit)
@@ -99,20 +108,23 @@ n_removed = before-after
 n_removed 
 pct_removed = 100-(after/before *100)
 pct_removed
-# 3.4% exclusion
-
+# 
 ####### INSPECT DISTRIBUTIONS / REMOVE OUTLIERs : ACCURACY ###############################
 
 # overall accuracy per participant
 overall_accuracy = df %>% 
   tabyl(accuracy,participant) %>% 
   adorn_percentages("col") %>%
-  filter(accuracy==1) %>% gather()
+  filter(accuracy==1) %>% 
+  gather() %>%
+  filter(key != "accuracy") %>%
+  inner_join(df, by = c("key" = "participant")) %>%
+  select(key, value)      
 
 accuracyDens = overall_accuracy %>% 
-  ggplot(aes(x=value)) + geom_density()
+  ggplot(aes(x=value, fill = language)) + geom_density(alpha = .6)
 accuracyBox = overall_accuracy%>% 
-  ggplot(aes(y=value)) + geom_boxplot()
+  ggplot(aes(y=value, fill = language)) + geom_boxplot()
 
 grid.arrange(accuracyDens,accuracyBox, ncol = 2)
 
@@ -125,7 +137,4 @@ n_removed = before - after2
 n_removed
 total_pct_removed = 100-(after2/before* 100)
 total_pct_removed 
-# 6.63 percent of data removed
 
-##### WRITE NEW DATA FILE ###############################################
-write_csv(df, "RT_task2_CLEAN")
