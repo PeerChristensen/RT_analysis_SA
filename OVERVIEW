@@ -22,13 +22,14 @@ Scripts:
     - model conflict effect
     - model coefficient of variability
 
-4 - central tendency analysis:
+4 - mixed-effects regression analysis:
+    - test normality
     - test transformations (see Baayen)
     - model
 
-    
 5 - robust analysis
 
 6 - extra
     - correlation plots
-
+    
+notes:

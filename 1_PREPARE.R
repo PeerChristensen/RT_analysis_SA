@@ -44,7 +44,7 @@ df$sound       <- factor(df$sound)
 ####### ADD VARIABLES #######################
 
 df$logRT <- log(df$RT)
-df$RTinv <- 1/df$RT
+df$RTinv <- (1/df$RT) * 1000
 d_table  <- data.table(df)
 d_table[ , RTlag := shift(RT)]
 df       <- as.tibble(d_table)

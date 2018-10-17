@@ -173,3 +173,4 @@ RT_overall <- df %>%
 grid.arrange(RT_within,RT_overall,
               top = grid::textGrob("RT by trial",
                                    gp=gpar(fontsize=20)))
+

@@ -28,7 +28,7 @@ theme_set(theme_bw())
 ####### ESTIMATE AND VISUALISE PARAMETERS ###
 
 params <- df %>% 
-  group_by(language,condition,congruent,participant,sound) %>%
+  group_by(language,condition,congruent,participant) %>%
   dplyr::summarise(n        = n(),
                    mean     = mean(RT),
                    sd       = sd(RT),
@@ -49,7 +49,7 @@ params_ex %>%
   facet_grid(language~condition + congruent)
 
 # -------------------------------------------
-####### VISUALISE RT DISTRIBUTIONS ##########
+####### RT DISTRIBUTIONS BY PARTICIPANT 
 
 af_density <- df         %>% 
   filter(language=="Afrikaans") %>%
@@ -78,6 +78,9 @@ xh_density <- df %>%
 grid.arrange(af_density,xh_density,ncol=2,
              top = grid::textGrob("by-participant RT distributions",
                                   gp=gpar(fontsize=20)))
+
+# -------------------------------------------
+####### RT DISTRIBUTIONS BY ITEM ############
 
 # -------------------------------------------
 ####### FIT DATA TO DISTRIBUTIONS ###########
@@ -336,8 +339,10 @@ conflict_df <- df %>%
                    m_congruent   = mean(RT[congruent==TRUE]),
                    conflict      = m_incongruent - m_congruent)
 
-conflict_mod_full = lm(lm(conflict ~ language*condition,data=conflict_df))
+conflict_mod_full = lm(conflict ~ language*condition,data=conflict_df)
 summary(conflict_mod_full)
+
+# significant interaction with aggressive 2 sd trimming, but not at 2.5 or 3
 
 ### COEFFICIENT OF VARIABILITY
 
